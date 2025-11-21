@@ -5,27 +5,23 @@ import { useSwipeable } from 'react-swipeable';
 
 const GRID_SIZE = 4;
 
-// COLOR DEFINITIONS - This MUST work
-const tileColors = {
-  0: { background: 'rgba(238, 228, 218, 0.35)', color: '#776e65' },
-  2: { background: '#eee4da', color: '#776e65' },
-  4: { background: '#ede0c8', color: '#776e65' },
-  8: { background: '#f2b179', color: '#f9f6f2' },
-  16: { background: '#f59563', color: '#f9f6f2' },
-  32: { background: '#f67c5f', color: '#f9f6f2' },
-  64: { background: '#f65e3b', color: '#f9f6f2' },
-  128: { background: '#edcf72', color: '#f9f6f2' },
-  256: { background: '#edcc61', color: '#f9f6f2' },
-  512: { background: '#edc850', color: '#f9f6f2' },
-  1024: { background: '#edc53f', color: '#f9f6f2' },
-  2048: { background: 'linear-gradient(135deg, #edc22e, #f2b179)', color: '#f9f6f2' },
-};
-
-// Debug function to check colors
-const getTileStyle = (value: number) => {
-  const colorStyle = tileColors[value as keyof typeof tileColors] || tileColors[2048];
-  console.log(`Tile ${value}:`, colorStyle); // Debug log
-  return colorStyle;
+// SIMPLE COLOR FUNCTION - This will definitely work
+const getTileColor = (value: number) => {
+  switch (value) {
+    case 0: return { background: 'rgba(238, 228, 218, 0.35)', color: '#776e65' };
+    case 2: return { background: '#eee4da', color: '#776e65' };
+    case 4: return { background: '#ede0c8', color: '#776e65' };
+    case 8: return { background: '#f2b179', color: '#f9f6f2' };
+    case 16: return { background: '#f59563', color: '#f9f6f2' };
+    case 32: return { background: '#f67c5f', color: '#f9f6f2' };
+    case 64: return { background: '#f65e3b', color: '#f9f6f2' };
+    case 128: return { background: '#edcf72', color: '#f9f6f2' };
+    case 256: return { background: '#edcc61', color: '#f9f6f2' };
+    case 512: return { background: '#edc850', color: '#f9f6f2' };
+    case 1024: return { background: '#edc53f', color: '#f9f6f2' };
+    case 2048: return { background: 'linear-gradient(135deg, #edc22e, #f2b179)', color: '#f9f6f2' };
+    default: return { background: '#3c3a32', color: '#f9f6f2' };
+  }
 };
 
 export default function Game2048() {
@@ -234,7 +230,7 @@ export default function Game2048() {
             padding: '12px'
           }}>
             {board.map((value, index) => {
-              const colorStyle = getTileStyle(value);
+              const colorStyle = getTileColor(value);
               return (
                 <div
                   key={index}
