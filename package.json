@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@coinbase/onchainkit": "^1.1.2",
+    "@tailwindcss/postcss": "^4.1.17",
     "next": "15.3.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
