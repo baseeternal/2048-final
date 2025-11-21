@@ -4,26 +4,20 @@ import React, { useState, useEffect } from 'react';
 import { useSwipeable } from 'react-swipeable';
 
 const GRID_SIZE = 4;
-const COLORS: Record<number, string> = {
-  0: 'bg-gray-300/20',
-  2: 'bg-blue-100 text-gray-800',
-  4: 'bg-blue-200 text-gray-800',
-  8: 'bg-orange-400 text-white',
-  16: 'bg-orange-500 text-white',
-  32: 'bg-red-400 text-white',
-  64: 'bg-red-500 text-white',
-  128: 'bg-yellow-300 text-gray-800',
-  256: 'bg-yellow-400 text-gray-800',
-  512: 'bg-yellow-500 text-white',
-  1024: 'bg-purple-400 text-white',
-  2048: 'bg-gradient-to-br from-yellow-400 to-orange-500 text-white shadow-lg',
-};
 
-type LeaderboardEntry = {
-  id: string;
-  score: number;
-  timestamp: number;
-  username: string;
+const tileColors = {
+  0: { background: 'rgba(238, 228, 218, 0.35)', color: '#776e65' },
+  2: { background: '#eee4da', color: '#776e65' },
+  4: { background: '#ede0c8', color: '#776e65' },
+  8: { background: '#f2b179', color: '#f9f6f2' },
+  16: { background: '#f59563', color: '#f9f6f2' },
+  32: { background: '#f67c5f', color: '#f9f6f2' },
+  64: { background: '#f65e3b', color: '#f9f6f2' },
+  128: { background: '#edcf72', color: '#f9f6f2' },
+  256: { background: '#edcc61', color: '#f9f6f2' },
+  512: { background: '#edc850', color: '#f9f6f2' },
+  1024: { background: '#edc53f', color: '#f9f6f2' },
+  2048: { background: 'linear-gradient(135deg, #edc22e, #f2b179)', color: '#f9f6f2' },
 };
 
 export default function Game2048() {
@@ -32,19 +26,10 @@ export default function Game2048() {
   const [bestScore, setBestScore] = useState(0);
   const [gameOver, setGameOver] = useState(false);
   const [won, setWon] = useState(false);
-  const [showLeaderboard, setShowLeaderboard] = useState(false);
-  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
-  const [username, setUsername] = useState('Player');
 
   useEffect(() => {
     const savedBest = localStorage.getItem('2048-best-score');
-    const savedLeaderboard = localStorage.getItem('2048-leaderboard');
-    const savedUsername = localStorage.getItem('2048-username');
-    
     if (savedBest) setBestScore(parseInt(savedBest));
-    if (savedLeaderboard) setLeaderboard(JSON.parse(savedLeaderboard));
-    if (savedUsername) setUsername(savedUsername);
-    
     resetGame();
   }, []);
 
@@ -64,22 +49,6 @@ export default function Game2048() {
     
     const randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
     grid[randomCell] = Math.random() < 0.9 ? 2 : 4;
-  };
-
-  const addToLeaderboard = (finalScore: number) => {
-    const newEntry: LeaderboardEntry = {
-      id: Date.now().toString(),
-      score: finalScore,
-      timestamp: Date.now(),
-      username: username,
-    };
-
-    const updatedLeaderboard = [...leaderboard, newEntry]
-      .sort((a, b) => b.score - a.score)
-      .slice(0, 10);
-
-    setLeaderboard(updatedLeaderboard);
-    localStorage.setItem('2048-leaderboard', JSON.stringify(updatedLeaderboard));
   };
 
   const move = (direction: 'up' | 'down' | 'left' | 'right') => {
@@ -157,7 +126,6 @@ export default function Game2048() {
 
       if (!canMove(newGrid)) {
         setGameOver(true);
-        addToLeaderboard(newScore);
       }
     }
   };
@@ -176,13 +144,6 @@ export default function Game2048() {
     return false;
   };
 
-  const saveUsername = () => {
-    if (username.trim()) {
-      localStorage.setItem('2048-username', username.trim());
-      alert('Username saved!');
-    }
-  };
-
   const handlers = useSwipeable({
     onSwipedLeft: () => move('left'),
     onSwipedRight: () => move('right'),
@@ -199,188 +160,175 @@ export default function Game2048() {
       else if (e.key === 'ArrowLeft') move('left');
       else if (e.key === 'ArrowRight') move('right');
       else if (e.key === 'r' || e.key === 'R') resetGame();
-      else if (e.key === 'l' || e.key === 'L') setShowLeaderboard(true);
     };
 
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
   });
 
-  const formatDate = (timestamp: number) => {
-    return new Date(timestamp).toLocaleDateString();
-  };
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-100 flex flex-col items-center justify-center p-4 font-sans">
-      <div className="w-full max-w-4xl">
-        <div className="flex justify-between items-center mb-6">
+    <div style={{
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '20px',
+      fontFamily: 'Arial, sans-serif'
+    }}>
+      <div style={{ maxWidth: '500px', width: '100%' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
           <div>
-            <h1 className="text-5xl font-bold text-gray-800">2048</h1>
-            <p className="text-gray-600 text-sm">Join the numbers and get to the 2048 tile!</p>
+            <h1 style={{ fontSize: '48px', fontWeight: 'bold', color: '#776e65', margin: 0 }}>2048</h1>
+            <p style={{ color: '#776e65', fontSize: '14px', margin: 0 }}>Join the numbers and get to the 2048 tile!</p>
+          </div>
+        </div>
+
+        <div style={{ display: 'flex', gap: '16px', marginBottom: '20px' }}>
+          <div style={{ background: 'white', borderRadius: '8px', padding: '12px', flex: 1, textAlign: 'center', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+            <div style={{ color: '#776e65', fontSize: '12px', fontWeight: '600' }}>SCORE</div>
+            <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#776e65' }}>{score}</div>
+          </div>
+          <div style={{ background: 'white', borderRadius: '8px', padding: '12px', flex: 1, textAlign: 'center', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+            <div style={{ color: '#776e65', fontSize: '12px', fontWeight: '600' }}>BEST</div>
+            <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#776e65' }}>{bestScore}</div>
           </div>
           <button
-            onClick={() => setShowLeaderboard(true)}
-            className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors"
+            onClick={resetGame}
+            style={{
+              background: '#8f7a66',
+              color: 'white',
+              padding: '12px 24px',
+              borderRadius: '8px',
+              fontWeight: '600',
+              border: 'none',
+              cursor: 'pointer',
+              boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+            }}
           >
-            🏆 Leaderboard
+            New Game
           </button>
         </div>
 
-        <div className="flex gap-6">
-          <div className="flex-1">
-            <div className="flex gap-4 mb-6">
-              <div className="bg-white rounded-lg p-3 shadow-md flex-1 text-center">
-                <div className="text-gray-500 text-sm font-medium">SCORE</div>
-                <div className="text-2xl font-bold text-gray-800">{score}</div>
-              </div>
-              <div className="bg-white rounded-lg p-3 shadow-md flex-1 text-center">
-                <div className="text-gray-500 text-sm font-medium">BEST</div>
-                <div className="text-2xl font-bold text-gray-800">{bestScore}</div>
-              </div>
-              <button
-                onClick={resetGame}
-                className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors shadow-md"
-              >
-                New Game
-              </button>
-            </div>
-
-            <div className="bg-white rounded-lg p-4 shadow-md mb-6">
-              <label className="block text-gray-700 text-sm font-medium mb-2">
-                Your Name for Leaderboard
-              </label>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  placeholder="Enter your name"
-                  className="flex-1 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  maxLength={20}
-                />
-                <button
-                  onClick={saveUsername}
-                  className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors"
+        <div 
+          style={{
+            background: '#bbada0',
+            borderRadius: '12px',
+            padding: '16px',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.2)',
+            position: 'relative'
+          }}
+          {...handlers}
+        >
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(4, 1fr)',
+            gap: '12px',
+            background: '#bbada0',
+            borderRadius: '8px',
+            padding: '12px'
+          }}>
+            {board.map((value, index) => {
+              const colorStyle = tileColors[value as keyof typeof tileColors] || tileColors[2048];
+              return (
+                <div
+                  key={index}
+                  style={{
+                    width: '60px',
+                    height: '60px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    borderRadius: '8px',
+                    fontSize: value < 100 ? '24px' : value < 1000 ? '20px' : '16px',
+                    fontWeight: 'bold',
+                    background: colorStyle.background,
+                    color: colorStyle.color,
+                    transition: 'all 0.15s',
+                    boxShadow: value === 0 ? 'inset 0 0 0 1px rgba(0,0,0,0.1)' : '0 4px 8px rgba(0,0,0,0.2)'
+                  }}
                 >
-                  Save
-                </button>
-              </div>
-            </div>
-
-            <div 
-              className="bg-gray-400 rounded-xl p-4 shadow-2xl relative touch-none"
-              {...handlers}
-            >
-              <div className="grid grid-cols-4 gap-3 bg-gray-400 rounded-lg p-3">
-                {board.map((value, index) => (
-                  <div
-                    key={index}
-                    className={`w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center rounded-lg text-xl sm:text-2xl font-bold transition-all duration-150 ${
-                      COLORS[value] || 'bg-gray-300'
-                    } ${value === 0 ? 'text-transparent' : ''} shadow-inner`}
-                  >
-                    {value !== 0 ? value : ''}
-                  </div>
-                ))}
-              </div>
-
-              {gameOver && (
-                <div className="absolute inset-0 bg-black/80 rounded-xl flex flex-col items-center justify-center">
-                  <div className="text-white text-center">
-                    <h2 className="text-3xl font-bold mb-2">Game Over!</h2>
-                    <p className="text-lg mb-4">Final Score: {score}</p>
-                    <button
-                      onClick={resetGame}
-                      className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-lg font-semibold transition-colors"
-                    >
-                      Try Again
-                    </button>
-                  </div>
+                  {value !== 0 ? value : ''}
                 </div>
-              )}
-
-              {won && !gameOver && (
-                <div className="absolute inset-0 bg-yellow-500/90 rounded-xl flex flex-col items-center justify-center">
-                  <div className="text-white text-center">
-                    <h2 className="text-3xl font-bold mb-2">You Win! 🎉</h2>
-                    <p className="text-lg mb-4">You reached 2048!</p>
-                    <button
-                      onClick={() => setWon(false)}
-                      className="bg-green-500 hover:bg-green-600 text-white px-8 py-3 rounded-lg font-semibold transition-colors"
-                    >
-                      Continue Playing
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            <div className="mt-6 text-center text-gray-600 text-sm">
-              <p>Use arrow keys or swipe to move the tiles</p>
-              <p className="mt-1">Press R to restart • L for Leaderboard • Built on Base</p>
-            </div>
+              );
+            })}
           </div>
 
-          {showLeaderboard && (
-            <div className="w-80 bg-white rounded-xl shadow-2xl p-6">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-2xl font-bold text-gray-800">🏆 Leaderboard</h2>
+          {gameOver && (
+            <div style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: 'rgba(0,0,0,0.8)',
+              borderRadius: '12px',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              <div style={{ color: 'white', textAlign: 'center' }}>
+                <h2 style={{ fontSize: '32px', fontWeight: 'bold', marginBottom: '8px' }}>Game Over!</h2>
+                <p style={{ fontSize: '18px', marginBottom: '16px' }}>Final Score: {score}</p>
                 <button
-                  onClick={() => setShowLeaderboard(false)}
-                  className="text-gray-500 hover:text-gray-700 text-xl"
+                  onClick={resetGame}
+                  style={{
+                    background: '#8f7a66',
+                    color: 'white',
+                    padding: '12px 32px',
+                    borderRadius: '8px',
+                    fontWeight: '600',
+                    border: 'none',
+                    cursor: 'pointer'
+                  }}
                 >
-                  ✕
+                  Try Again
                 </button>
-              </div>
-              
-              {leaderboard.length === 0 ? (
-                <div className="text-center text-gray-500 py-8">
-                  <p>No scores yet!</p>
-                  <p className="text-sm mt-2">Play a game to appear here</p>
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  {leaderboard.map((entry, index) => (
-                    <div
-                      key={entry.id}
-                      className={`flex justify-between items-center p-3 rounded-lg ${
-                        index === 0 ? 'bg-yellow-100 border-2 border-yellow-400' :
-                        index === 1 ? 'bg-gray-100 border-2 border-gray-300' :
-                        index === 2 ? 'bg-orange-100 border-2 border-orange-300' :
-                        'bg-blue-50'
-                      }`}
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className={`w-6 h-6 rounded-full flex items-center justify-center text-sm font-bold ${
-                          index === 0 ? 'bg-yellow-400 text-white' :
-                          index === 1 ? 'bg-gray-400 text-white' :
-                          index === 2 ? 'bg-orange-400 text-white' :
-                          'bg-blue-400 text-white'
-                        }`}>
-                          {index + 1}
-                        </div>
-                        <div>
-                          <div className="font-semibold text-gray-800">
-                            {entry.username}
-                          </div>
-                          <div className="text-xs text-gray-500">
-                            {formatDate(entry.timestamp)}
-                          </div>
-                        </div>
-                      </div>
-                      <div className="text-lg font-bold text-gray-800">
-                        {entry.score.toLocaleString()}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-              
-              <div className="mt-6 text-center text-sm text-gray-500">
-                <p>Top 10 scores are saved locally</p>
               </div>
             </div>
           )}
+
+          {won && !gameOver && (
+            <div style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: 'rgba(237, 194, 46, 0.9)',
+              borderRadius: '12px',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              <div style={{ color: 'white', textAlign: 'center' }}>
+                <h2 style={{ fontSize: '32px', fontWeight: 'bold', marginBottom: '8px' }}>You Win! 🎉</h2>
+                <p style={{ fontSize: '18px', marginBottom: '16px' }}>You reached 2048!</p>
+                <button
+                  onClick={() => setWon(false)}
+                  style={{
+                    background: '#8f7a66',
+                    color: 'white',
+                    padding: '12px 32px',
+                    borderRadius: '8px',
+                    fontWeight: '600',
+                    border: 'none',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Continue Playing
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div style={{ marginTop: '20px', textAlign: 'center', color: '#776e65', fontSize: '14px' }}>
+          <p>Use arrow keys or swipe to move the tiles</p>
+          <p style={{ marginTop: '4px' }}>Press R to restart • Built on Base</p>
         </div>
       </div>
     </div>

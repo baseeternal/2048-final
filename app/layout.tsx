@@ -1,5 +1,3 @@
-import './globals.css';
-
 export const metadata = {
   title: '2048 Game',
   description: 'Play the classic 2048 puzzle game with leaderboard',
