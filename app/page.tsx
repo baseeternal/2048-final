@@ -515,4 +515,4 @@ export default function Game2048() {
       </div>
     </div>
   );
-}
+}// 2048 Game with Leaderboard
