@@ -5,22 +5,107 @@ import { useSwipeable } from 'react-swipeable';
 
 const GRID_SIZE = 4;
 
-// SIMPLE COLOR FUNCTION - This will definitely work
-const getTileColor = (value: number) => {
+// DIRECT STYLING FUNCTION - No objects, no lookups
+const getTileStyle = (value: number) => {
+  const baseStyle = {
+    width: '60px',
+    height: '60px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: '8px',
+    fontSize: '24px',
+    fontWeight: 'bold',
+    transition: 'all 0.15s',
+    boxShadow: '0 4px 8px rgba(0,0,0,0.2)'
+  };
+
   switch (value) {
-    case 0: return { background: 'rgba(238, 228, 218, 0.35)', color: '#776e65' };
-    case 2: return { background: '#eee4da', color: '#776e65' };
-    case 4: return { background: '#ede0c8', color: '#776e65' };
-    case 8: return { background: '#f2b179', color: '#f9f6f2' };
-    case 16: return { background: '#f59563', color: '#f9f6f2' };
-    case 32: return { background: '#f67c5f', color: '#f9f6f2' };
-    case 64: return { background: '#f65e3b', color: '#f9f6f2' };
-    case 128: return { background: '#edcf72', color: '#f9f6f2' };
-    case 256: return { background: '#edcc61', color: '#f9f6f2' };
-    case 512: return { background: '#edc850', color: '#f9f6f2' };
-    case 1024: return { background: '#edc53f', color: '#f9f6f2' };
-    case 2048: return { background: 'linear-gradient(135deg, #edc22e, #f2b179)', color: '#f9f6f2' };
-    default: return { background: '#3c3a32', color: '#f9f6f2' };
+    case 0:
+      return {
+        ...baseStyle,
+        background: 'rgba(238, 228, 218, 0.35)',
+        color: 'transparent',
+        boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.1)'
+      };
+    case 2:
+      return {
+        ...baseStyle,
+        background: '#eee4da',
+        color: '#776e65'
+      };
+    case 4:
+      return {
+        ...baseStyle,
+        background: '#ede0c8',
+        color: '#776e65'
+      };
+    case 8:
+      return {
+        ...baseStyle,
+        background: '#f2b179',
+        color: '#f9f6f2'
+      };
+    case 16:
+      return {
+        ...baseStyle,
+        background: '#f59563',
+        color: '#f9f6f2'
+      };
+    case 32:
+      return {
+        ...baseStyle,
+        background: '#f67c5f',
+        color: '#f9f6f2'
+      };
+    case 64:
+      return {
+        ...baseStyle,
+        background: '#f65e3b',
+        color: '#f9f6f2'
+      };
+    case 128:
+      return {
+        ...baseStyle,
+        background: '#edcf72',
+        color: '#f9f6f2',
+        fontSize: '20px'
+      };
+    case 256:
+      return {
+        ...baseStyle,
+        background: '#edcc61',
+        color: '#f9f6f2',
+        fontSize: '20px'
+      };
+    case 512:
+      return {
+        ...baseStyle,
+        background: '#edc850',
+        color: '#f9f6f2',
+        fontSize: '20px'
+      };
+    case 1024:
+      return {
+        ...baseStyle,
+        background: '#edc53f',
+        color: '#f9f6f2',
+        fontSize: '16px'
+      };
+    case 2048:
+      return {
+        ...baseStyle,
+        background: 'linear-gradient(135deg, #edc22e, #f2b179)',
+        color: '#f9f6f2',
+        fontSize: '16px'
+      };
+    default:
+      return {
+        ...baseStyle,
+        background: '#3c3a32',
+        color: '#f9f6f2',
+        fontSize: '14px'
+      };
   }
 };
 
@@ -230,24 +315,11 @@ export default function Game2048() {
             padding: '12px'
           }}>
             {board.map((value, index) => {
-              const colorStyle = getTileColor(value);
+              const tileStyle = getTileStyle(value);
               return (
                 <div
                   key={index}
-                  style={{
-                    width: '60px',
-                    height: '60px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    borderRadius: '8px',
-                    fontSize: value < 100 ? '24px' : value < 1000 ? '20px' : '16px',
-                    fontWeight: 'bold',
-                    background: colorStyle.background,
-                    color: colorStyle.color,
-                    transition: 'all 0.15s',
-                    boxShadow: value === 0 ? 'inset 0 0 0 1px rgba(0,0,0,0.1)' : '0 4px 8px rgba(0,0,0,0.2)'
-                  }}
+                  style={tileStyle}
                 >
                   {value !== 0 ? value : ''}
                 </div>
